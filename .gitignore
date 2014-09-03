@@ -24,3 +24,8 @@
 *.tlog
 *.opensdf
 *.sdf
+*.ilk
+*.lastbuildstate
+*.log
+*.pdb
+*.idb
