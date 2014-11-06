@@ -18,26 +18,25 @@ ExtInt::ExtInt(const ExtInt& copy_)
 		binaryRepresentation[i] = copy_.binaryRepresentation[i];
 	}
 }
-ExtInt::ExtInt(const int& value_, bool signed_ = true)
+ExtInt::ExtInt(const int& value_, bool signed_)
 {
+	isSigned = signed_;
 	int tempVal;
 	value_ < 0 ? tempVal = -value_: tempVal = value_;
 
 	InitBoolArray();	
 	ToBinaryRepresentation(tempVal);
 	
-	//if negative, minus 1 then invert
+	//if negative, invert then plus 1 
 	if ( value_ < 0 ) 
-	{
-		(*this) = (*this) - ExtInt(1);
+	{		
 		(*this) = ~(*this);
+		(*this) = (*this) + ExtInt(1);
+		isSigned = true;
 	}
-
-	isSigned = signed_;
 }
 
-//
-ExtInt::ExtInt(bool* byte_, bool signed_ = true)
+ExtInt::ExtInt(bool* byte_, bool signed_)
 {
 	InitBoolArray();
 	for ( int i = 0; i < TOTAL_BITS; ++i )
@@ -47,20 +46,78 @@ ExtInt::ExtInt(bool* byte_, bool signed_ = true)
 	isSigned = signed_;
 }
 
+ExtInt::ExtInt(const char* array_, bool signed_)
+{
+	isSigned = signed_;
+
+	InitBoolArray();
+	for ( int i = 0; i < TOTAL_BITS; ++i )
+	{
+		if (array_[i] == '0')
+			binaryRepresentation[i] = false;
+		else if ( array_[i] == '1' )
+			binaryRepresentation[i] = true;
+		else
+			throw InvalidInputException();
+	}
+}
+
 int ExtInt::ToInt()
 {
 	int value = 0;
-	int reverse_iter = TOTAL_BITS - 1;
-	for ( int bit = 0; bit < TOTAL_BITS; ++bit )
+	
+	//if unsigned 
+	if  (!isSigned )
 	{
-		//if the bool element has been turned on
-		if ( binaryRepresentation[bit] )
+		int reverse_iter = TOTAL_BITS - 1;
+
+		for ( int bit = 0; bit < TOTAL_BITS; ++bit )
 		{
-			value += 1 << reverse_iter;
+			//if the bool element has been turned on
+			if ( binaryRepresentation[bit] )
+			{
+				value += 1 << reverse_iter;
+			}
+			--reverse_iter;
 		}
-		--reverse_iter;
 	}
-	isSigned = true;
+	else //isSigned 
+	{	
+		int reverse_iter = TOTAL_BITS - 2;
+		int bit = 1; //skip the signed bit
+		bool positive = !binaryRepresentation[0];
+		
+		ExtInt temp;
+		if ( !positive )
+		{
+			//reverse of twos complement
+			temp = ~(*this);
+			temp = temp + ExtInt(1);
+		}
+		else
+		{
+			temp = (*this);
+		}
+
+		//skip the signed bit
+		while ( reverse_iter >= 0 )
+		{
+			//if the bool element has been turned on
+			if ( temp.binaryRepresentation[bit] )
+			{
+				value += 1 << reverse_iter;
+			}
+			--reverse_iter;
+			++bit;
+		}
+		
+		if  (!positive )
+		{
+			//invert the value
+			value = -value;
+		}
+	}
+
 	return value;
 }
 

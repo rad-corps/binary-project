@@ -62,7 +62,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\Converter.cpp" />
     <ClCompile Include="source\ExtendedInt.cpp" />
     <ClCompile Include="source\main.cpp" />
   </ItemGroup>

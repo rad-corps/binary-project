@@ -25,80 +25,190 @@
 
 using namespace std;
 
-//string DecimalToBinaryUnsigned(unsigned int decimal_)
-//{
-//	vector<int> bits;
-//	string ret = "";
-//	while ( decimal_ > 0 )
-//	{
-//		bits.push_back(decimal_ % 2);
-//		decimal_ /= 2;
-//	}
-//
-//	for ( int i = bits.size() - 1; i >= 0; --i )
-//	{
-//		ret += to_string(bits[i]);
-//	}
-//	return ret;
-//}
-//
-//string DecimalToBinarySigned(int decimal_)
-//{
-//	vector<int> bits;
-//	string ret = "";
-//	while ( decimal_ > 0 )
-//	{
-//		bits.push_back(decimal_ % 2);
-//		decimal_ /= 2;
-//	}
-//
-//	for ( int i = bits.size() - 1; i >= 0; --i )
-//	{
-//		ret += to_string(bits[i]);
-//	}
-//	return "Not Yet Implemented";
-//}
+enum EXTINT_OPERATOR
+{
+	ADD			=1,
+	SUBTRACT	=2,
+	AND			=3,
+	OR			=4,
+	XOR			=5,
+	NOT			=6,
+	LEFT_SHIFT	=7,
+	RIGHT_SHIFT	=8,
+};
+
+EXTINT_OPERATOR
+HandleOperatorSelection()
+{
+	int selection;
+	//EXTINT_OPERATOR selection;
+	cout << endl << "Which operation would you like to perform?: " << endl;
+	cout << "1. Add" << endl;
+	cout << "2. Subtract" << endl;
+	cout << "3. AND" << endl;
+	cout << "4. OR" << endl;
+	cout << "5. XOR" << endl;
+	cout << "6. NOT" << endl;
+	cout << "7. Left Shift" << endl;
+	cout << "8. Right Shift" << endl;
+
+	cin >> selection;
+
+	if ( selection >= EXTINT_OPERATOR::ADD && selection <= RIGHT_SHIFT )
+	{
+		return (EXTINT_OPERATOR)selection;
+	}
+	else
+	{
+		cout << endl << "Sorry the program will only accept numbers 1 to 8" << endl;
+		system("pause");
+		return HandleOperatorSelection();
+	}
+}
+
+ExtInt
+HandleBinaryUserEntry(bool signed_)
+{
+	string binary = "";
+	cout << endl << "Please enter a binary number in the following format 10101010" << endl;
+	cin >> binary;
+	cout << endl << "Attempting to parse: " << binary << endl;
+			
+	ExtInt binInt;
+	try 
+	{
+		binInt = ExtInt(binary.c_str(), signed_);
+		cout << "The integer representation of " << binary << " is " << binInt.ToInt() << endl;
+	}
+	catch ( InvalidInputException e_ ) 
+	{
+		cout << "Sorry, the binary conversion program could not parse your input '" << binary << "'" << endl << 
+			"Please make sure you only use 1 and 0 characters " << endl <<
+			"and that the entry is exactly 8 characters long." << endl;	
+		system("pause");
+		return HandleBinaryUserEntry(signed_);
+	}
+	return binInt;
+}
+
+ExtInt
+HandleIntUserEntry(bool signed_)
+{
+	string strNum = "";
+	cout << endl << "Please enter an integer number: " << endl;
+	cin >> strNum;
+	int result;
+			
+	try
+	{
+		result = std::stoi(strNum);
+	}
+	catch ( std::invalid_argument e_ )
+	{
+		cout << endl << "Please enter a valid integer (no letters, spaces, or special characters" << endl;
+		return HandleIntUserEntry(signed_);
+	}
+	ExtInt binInt;
+	binInt = ExtInt(result, signed_);
+	cout << "The binary representation of " << result << " is " << binInt.ToStringOfBinaryRepresentation() << endl;
+	return binInt;
+}
+
+void ShowBothNumbersAndResult(ExtInt num1_, ExtInt num2_, ExtInt res_)
+{
+	cout << "bin num1: " << num1_.ToStringOfBinaryRepresentation() << "\tint num1: " << num1_.ToInt() << endl;
+	cout << "bin num2: " << num2_.ToStringOfBinaryRepresentation() << "\tint num2: " << num2_.ToInt() << endl;
+	cout << endl << "bin res:  " << res_.ToStringOfBinaryRepresentation() << "\tint res:  " << res_.ToInt() << endl;
+	system("pause");
+}
+
 
 int main()
 {
-	//cout << "Adam Hulbert - Bitwise Operator Program" << endl;
-	//cout << "---------------------------------------" << endl;
-	//cout << "Enter your selection: " << endl;
-	//cout << "1. Perform " << endl;
-	//cout << DecimalToBinaryUnsigned(6546544) << endl;
+	int selection;
+	bool signedMode = true;
+	do
+	{
+		system("cls");
+		if ( signedMode )
+		{
+			cout << "The binary conversion program is currently in signed mode." << endl;
+			cout << "1. Swap to unsigned mode" << endl;
+		}
+		else
+		{
+			cout << "The binary conversion program is currently in unsigned mode." << endl;
+			cout << "1. Swap to signed mode" << endl;
+		}
+		
+		cout << "2. Enter a binary number (1 byte, or 8 bits)" << endl;
+		cout << "3. Enter an integer number" << endl;
+		
+		ExtInt int1;
+		ExtInt int2;
+		ExtInt res;
+		EXTINT_OPERATOR myOp;
+		
+		cin >> selection;
+		if ( selection == 1 )
+		{
+			signedMode = !signedMode;
+		}
+		else if ( selection == 2 ) //binary entry
+		{
+			int1 = HandleBinaryUserEntry(signedMode);
+			myOp = HandleOperatorSelection();			
+			int2 = HandleBinaryUserEntry(signedMode);
+		}
+		else if ( selection == 3 ) //integer entry
+		{
+			int1 = HandleIntUserEntry(signedMode);
+			myOp = HandleOperatorSelection();
+			int2 = HandleIntUserEntry(signedMode);
+		}
 
-	vector<ExtInt> testData;
+		if ( selection == 2 || selection == 3 )
+		{
+			if ( myOp == EXTINT_OPERATOR::ADD )
+			{
+				res = int1 + int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::AND )
+			{
+				res = int1 & int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::LEFT_SHIFT )
+			{
+				res = int1 << int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::RIGHT_SHIFT )
+			{
+				res = int1 >> int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::SUBTRACT )
+			{
+				res = int1 - int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::NOT )
+			{
+				res = 0;
+				int1 = ~int1;
+				int2 = ~int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::OR )
+			{
+				res = int1 | int2;
+			}
+			if ( myOp == EXTINT_OPERATOR::XOR )
+			{
+				res = int1 ^ int2;
+			}
+
+			ShowBothNumbersAndResult(int1, int2, res);
+		}
+
+	}while ( selection != 0 );
 
 	
-	//for ( int i = 0; i < 50; ++i )
-	//{
-	//	testData.push_back(i);
-	//	cout << "ValueAsInt             - " << testData[i].ToInt() << endl;
-	//	cout << "ToBinaryRepresentation - " << testData[i].ToStringOfBinaryRepresentation() << endl;
-	//	
-	//	if ( i > 0 )
-	//	{
-	//		cout << i << " & " << i - 1 << " - " << (testData[i] & testData[i-1]).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " | " << i - 1 << " - " << (testData[i] | testData[i-1]).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " ~ - " << (~testData[i]).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " ^ " << i - 1 << " - " << (testData[i] ^ testData[i-1]).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " << " << 1 << " - " << (testData[i] << ExtInt(1)).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " << " << 2 << " - " << (testData[i] << ExtInt(2)).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " << " << 3 << " - " << (testData[i] << ExtInt(3)).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " >> " << 1 << " - " << (testData[i] >> ExtInt(1)).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " >> " << 2 << " - " << (testData[i] >> ExtInt(2)).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " >> " << 3 << " - " << (testData[i] >> ExtInt(3)).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " + " << i - 1 << " - " << (testData[i] + testData[i-1]).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " + " << i - 1 << " - " << (testData[i] + testData[i-1]).ToInt() << endl;
-	//		cout << i << " - " << i - 1 << " - " << (testData[i] - testData[i-1]).ToStringOfBinaryRepresentation() << endl;
-	//		cout << i << " - " << i - 1 << " - " << (testData[i] - testData[i-1]).ToInt() << endl;
-	//	}
-	//}
-	
-	ExtInt test = -5;
-	cout << test.ToStringOfBinaryRepresentation() << endl;
-
-
-	system("pause");
 	return 0;
 }

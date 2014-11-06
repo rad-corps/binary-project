@@ -6,6 +6,11 @@
 
 #include <string>
 
+class InvalidInputException
+{
+
+};
+
 class ExtInt 
 {
 
@@ -16,6 +21,9 @@ public:
 	ExtInt(const int& value_, bool signed_ = true);
 	//assume 1 byte (32 bools in the array)
 	ExtInt(bool* byte_, bool signed_ = true);
+	
+	//throws InvalidInputException if not in format 00000000
+	ExtInt(const char* array_, bool signed_ = true);
 	~ExtInt();
 	int ToInt();
 	bool* ToBinaryRepresentation(int value_);
