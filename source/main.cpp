@@ -110,15 +110,21 @@ HandleIntUserEntry(bool signed_)
 	}
 	ExtInt binInt;
 	binInt = ExtInt(result, signed_);
-	cout << "The binary representation of " << result << " is " << binInt.ToStringOfBinaryRepresentation() << endl;
+	cout << endl << "The binary representation of " << result << " is " << binInt.ToStringOfBinaryRepresentation() << endl;
 	return binInt;
 }
 
 void ShowBothNumbersAndResult(ExtInt num1_, ExtInt num2_, ExtInt res_)
 {
-	cout << "bin num1: " << num1_.ToStringOfBinaryRepresentation() << "\tint num1: " << num1_.ToInt() << endl;
+	cout << endl << "bin num1: " << num1_.ToStringOfBinaryRepresentation() << "\tint num1: " << num1_.ToInt() << endl;
 	cout << "bin num2: " << num2_.ToStringOfBinaryRepresentation() << "\tint num2: " << num2_.ToInt() << endl;
-	cout << endl << "bin res:  " << res_.ToStringOfBinaryRepresentation() << "\tint res:  " << res_.ToInt() << endl;
+	cout << "bin res:  " << res_.ToStringOfBinaryRepresentation() << "\tint res:  " << res_.ToInt() << endl;
+	system("pause");
+}
+
+void ShowResult(ExtInt result_)
+{
+	cout << endl << "bin res:  " << result_.ToStringOfBinaryRepresentation() << "\tint res:  " << result_.ToInt() << endl;
 	system("pause");
 }
 
@@ -129,6 +135,7 @@ int main()
 	bool signedMode = true;
 	do
 	{
+		//main user interface
 		system("cls");
 		if ( signedMode )
 		{
@@ -139,34 +146,50 @@ int main()
 		{
 			cout << "The binary conversion program is currently in unsigned mode." << endl;
 			cout << "1. Swap to signed mode" << endl;
-		}
-		
+		}		
 		cout << "2. Enter a binary number (1 byte, or 8 bits)" << endl;
 		cout << "3. Enter an integer number" << endl;
 		
-		ExtInt int1;
-		ExtInt int2;
-		ExtInt res;
+		//The user entered Extended Int objects will be stored in these 
+		ExtInt int1(signedMode);
+		ExtInt int2(signedMode);
+		
+		//The result of the user entered variables will be stored here
+		ExtInt res(signedMode);
+
+		//The user chosen operator
 		EXTINT_OPERATOR myOp;
 		
+		//user makes a program selection
 		cin >> selection;
+
+		//swap modes
 		if ( selection == 1 )
 		{
 			signedMode = !signedMode;
 		}
-		else if ( selection == 2 ) //binary entry
+		//user to enter binary values
+		else if ( selection == 2 ) 
 		{
 			int1 = HandleBinaryUserEntry(signedMode);
-			myOp = HandleOperatorSelection();			
-			int2 = HandleBinaryUserEntry(signedMode);
+			myOp = HandleOperatorSelection();	
+			
+			//we need a second value if we did not choose NOT
+			if ( myOp != EXTINT_OPERATOR::NOT )
+				int2 = HandleBinaryUserEntry(signedMode);
 		}
+		//user to enter int values
 		else if ( selection == 3 ) //integer entry
 		{
 			int1 = HandleIntUserEntry(signedMode);
 			myOp = HandleOperatorSelection();
-			int2 = HandleIntUserEntry(signedMode);
+			
+			//we need a second value if we did not choose NOT
+			if ( myOp != EXTINT_OPERATOR::NOT )
+				int2 = HandleIntUserEntry(signedMode);
 		}
 
+		//perform the calculation
 		if ( selection == 2 || selection == 3 )
 		{
 			if ( myOp == EXTINT_OPERATOR::ADD )
@@ -191,9 +214,7 @@ int main()
 			}
 			if ( myOp == EXTINT_OPERATOR::NOT )
 			{
-				res = 0;
-				int1 = ~int1;
-				int2 = ~int2;
+				res = ~int1;
 			}
 			if ( myOp == EXTINT_OPERATOR::OR )
 			{
@@ -204,11 +225,15 @@ int main()
 				res = int1 ^ int2;
 			}
 
-			ShowBothNumbersAndResult(int1, int2, res);
+			//show the results
+			if ( myOp != EXTINT_OPERATOR::NOT )
+				ShowBothNumbersAndResult(int1, int2, res);
+			else
+				ShowResult(res);
+
 		}
 
 	}while ( selection != 0 );
 
-	
 	return 0;
 }

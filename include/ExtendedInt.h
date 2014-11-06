@@ -1,3 +1,12 @@
+//Author: Adam Hulbert
+//Game Math and Open GL - Binary Operator Program
+//Class: ExtInt
+//Desc:
+// This class handles all of the required binary calculations and conversions by providing overloaded operators
+// and helper functions to do the work. 
+// Examples of use can be found in the main.cpp bundled with this project
+
+
 #pragma once
 
 #define EXTINT_NUMBYTES 1
@@ -14,7 +23,6 @@ class InvalidInputException
 class ExtInt 
 {
 
-
 public:
 	ExtInt(bool signed_ = true);
 	ExtInt(const ExtInt& copy_);
@@ -30,7 +38,7 @@ public:
 	std::string ToStringOfBinaryRepresentation();
 	ExtInt operator &(ExtInt& val_);  //AND
 	ExtInt operator |(ExtInt& val_);  //OR
-	ExtInt operator ~();					//NOT
+	ExtInt operator ~();			  //NOT
 	ExtInt operator ^(ExtInt& val_);  //XOR
 	ExtInt operator <<(ExtInt& val_); //left shift
 	ExtInt operator >>(ExtInt& val_); //right shift
@@ -39,9 +47,9 @@ public:
 
 private:
 	void InitBoolArray();
-	//bool* binaryRepresentation;
+
+	//this class is only storing the binary byte data and wether it is signed.
 	bool binaryRepresentation[TOTAL_BITS];
 	bool isSigned;
-	//int value; //unsigned ints will also be stored in this value as a negative
 
 };

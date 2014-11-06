@@ -123,7 +123,6 @@ int ExtInt::ToInt()
 
 ExtInt::~ExtInt()
 {
-//	delete binaryRepresentation;
 }
 	
 bool* ExtInt::ToBinaryRepresentation(int value_)
@@ -181,7 +180,7 @@ ExtInt ExtInt::operator &(ExtInt& val_)
 	}
 	
 	//return the result
-	ExtInt resObj(res);
+	ExtInt resObj(res, isSigned);
 	return resObj;
 }
 ExtInt ExtInt::operator |( ExtInt& val_) 
@@ -205,7 +204,7 @@ ExtInt ExtInt::operator |( ExtInt& val_)
 	}
 	
 	//return the result
-	ExtInt resObj(res);
+	ExtInt resObj(res, isSigned);
 	return resObj;
 }
 ExtInt ExtInt::operator ~()
@@ -221,7 +220,7 @@ ExtInt ExtInt::operator ~()
 	}
 	
 	//return the result
-	ExtInt resObj(res);
+	ExtInt resObj(res, isSigned);
 	return resObj;
 }				
 
@@ -247,7 +246,7 @@ ExtInt ExtInt::operator ^(ExtInt& val_)
 	}
 	
 	//return the result
-	ExtInt resObj(res);
+	ExtInt resObj(res, isSigned);
 	return resObj;
 }
 ExtInt ExtInt::operator <<(ExtInt& val_)
@@ -271,7 +270,7 @@ ExtInt ExtInt::operator <<(ExtInt& val_)
 	}
 	
 	//return the result
-	ExtInt resObj(res);
+	ExtInt resObj(res, isSigned);
 	return resObj;
 }
 ExtInt ExtInt::operator >>(ExtInt& val_)
@@ -281,7 +280,7 @@ ExtInt ExtInt::operator >>(ExtInt& val_)
 	int shift = val_.ToInt();
 	
 	bool res[TOTAL_BITS];
-	//do the <<
+	//do the >>
 	for ( int i = TOTAL_BITS-1; i >= 0; --i )
 	{
 		if ( i - shift >= 0 )
@@ -295,7 +294,7 @@ ExtInt ExtInt::operator >>(ExtInt& val_)
 	}
 	
 	//return the result
-	ExtInt resObj(res);
+	ExtInt resObj(res, isSigned);
 	return resObj;
 }
 
